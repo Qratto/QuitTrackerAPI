@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from sqlalchemy import select
 
-from database import SessionDep, create_tables
+from database import SessionDep, engine, Base
 from models import BadHabit, Relapse
 from schemas import ResponseBadHabit, CreateBadHabit, CreateRelapse, ResponseRelapse, BadHabitStats
 
@@ -12,7 +12,8 @@ from datetime import datetime, timezone, timedelta
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await create_tables()
+    async with engine.begin() as connect:
+        await connect.run_sync(Base.metadata.create_all)
     yield
 
 
@@ -26,7 +27,7 @@ async def check_work():
 
 @app.get("/habit", response_model=list[ResponseBadHabit], status_code=200)
 async def show_habits(session: SessionDep):
-    result = await session.exec(select(BadHabit))
+    result = await session.execute(select(BadHabit))
     return result.scalars().all()
 
 
@@ -53,7 +54,7 @@ async def mark_relapse(habit_id: int, relapse_data: CreateRelapse, session: Sess
 
 @app.get("/habit/{habit_id}/relapses", response_model=list[ResponseRelapse], status_code=200)
 async def show_relapses(habit_id: int, session: SessionDep):
-    result = await session.exec(select(Relapse).where(Relapse.habit_id == habit_id))
+    result = await session.execute(select(Relapse).where(Relapse.habit_id == habit_id))
     return result.scalars().all()
 
 
@@ -62,7 +63,7 @@ async def get_stats(habit_id: int, session: SessionDep):
     habit = await session.get(BadHabit, habit_id)
     if habit is None:
         raise HTTPException(status_code=404, detail="Not found")
-    result = await session.exec(select(Relapse).where(Relapse.habit_id == habit_id))
+    result = await session.execute(select(Relapse).where(Relapse.habit_id == habit_id))
     relapses = result.scalars().all()
     now = datetime.now(timezone.utc)
     started_at = habit.started_at.replace(tzinfo=timezone.utc)

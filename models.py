@@ -1,27 +1,31 @@
 from datetime import datetime, timezone
-from typing import Optional, List
-from sqlalchemy import DateTime
-from sqlmodel import SQLModel, Field, Relationship
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
+from database import Base
 
 
 def utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
-class BadHabit(SQLModel, table=True):
-    id: Optional[int] = Field(primary_key=True)
-    name: str
-    description: Optional[str] = None
-    started_at: datetime = Field(default_factory=utcnow, sa_type=DateTime(timezone=True))
-    created_at: datetime = Field(default_factory=utcnow, sa_type=DateTime(timezone=True))
+class BadHabit(Base):
+    __tablename__ = "bad_habits"
 
-    relapses: List["Relapse"] = Relationship(back_populates="habit")
+    id = Column(Integer, primary_key=True)
+    name = Column(String(200), nullable=False)
+    description = Column(Text, nullable=True)
+    started_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
+
+    relapses = relationship("Relapse", back_populates="habit", lazy="selectin")
 
 
-class Relapse(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    habit_id: int = Field(foreign_key="badhabit.id")
-    occurred_at: datetime = Field(default_factory=utcnow, sa_type=DateTime(timezone=True))
-    note: Optional[str] = None
+class Relapse(Base):
+    __tablename__ = "relapses"
 
-    habit: Optional[BadHabit] = Relationship(back_populates="relapses")
+    id = Column(Integer, primary_key=True)
+    habit_id = Column(Integer, ForeignKey("bad_habits.id"))
+    note = Column(String(200), nullable=True)
+    occurred_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
+
+    habit = relationship("BadHabit", back_populates="relapses", lazy="selectin")
