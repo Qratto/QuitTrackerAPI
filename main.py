@@ -5,7 +5,7 @@ from sqlalchemy import select
 
 from database import SessionDep, engine, Base
 from models import BadHabit, Relapse
-from schemas import ResponseBadHabit, CreateBadHabit, CreateRelapse, ResponseRelapse, BadHabitStats
+from schemas import ResponseBadHabit, CreateBadHabit, CreateRelapse, ResponseRelapse, BadHabitStats, EditBadHabit
 
 from datetime import datetime, timezone, timedelta
 
@@ -29,6 +29,34 @@ async def check_work():
 async def show_habits(session: SessionDep):
     result = await session.execute(select(BadHabit))
     return result.scalars().all()
+
+
+@app.get("/habit/{habit_id}", response_model=ResponseBadHabit, status_code=200)
+async def show_habit(habit_id: int, session: SessionDep):
+    habit = await session.get(BadHabit, habit_id)
+    return habit
+
+
+@app.delete("/habit/{habit_id}", status_code=200)
+async def delete_habit(habit_id: int, session: SessionDep):
+    habit = await session.get(BadHabit, habit_id)
+    await session.delete(habit)
+    await session.commit()
+    return {"ok": True}
+
+
+@app.patch("/habit/{habit_id}", response_model=ResponseBadHabit, status_code=200)
+async def update_habit(habit_id: int, habit_data: EditBadHabit, session: SessionDep):
+    habit_db = await session.get(BadHabit, habit_id)
+    if not habit_db:
+        raise HTTPException(status_code=404, detail="Not found")
+    update_data = habit_data.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(habit_db, field, value)
+
+    await session.commit()
+    await session.refresh(habit_db)
+    return habit_db
 
 
 @app.post("/habit", response_model=ResponseBadHabit, status_code=201)

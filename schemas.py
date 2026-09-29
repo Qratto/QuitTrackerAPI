@@ -4,14 +4,16 @@ from datetime import datetime
 
 # Habit schemas
 class BadHabitBase(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
     name: str
     description: str | None = None
 
 
 class CreateBadHabit(BadHabitBase):
     pass
+
+
+class EditBadHabit(BadHabitBase):
+    name: str | None = None
 
 
 class ResponseBadHabit(BadHabitBase):

@@ -17,7 +17,7 @@ class BadHabit(Base):
     started_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
     created_at = Column(DateTime(timezone=True), default=utcnow, nullable=False)
 
-    relapses = relationship("Relapse", back_populates="habit", lazy="selectin")
+    relapses = relationship("Relapse", back_populates="habit", lazy="selectin", cascade="all, delete-orphan")
 
 
 class Relapse(Base):
