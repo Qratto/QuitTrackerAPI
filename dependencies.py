@@ -5,13 +5,13 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
 from database import SessionDep
-from exceptions import CredentialsException
+from core.exceptions import CredentialsException
 from models import User
 from repositories.habits import BadHabitRepository
 from repositories.relapses import RelapseRepository
 from repositories.users import UserRepository
 from schemas import TokenData
-from security import SECRET_KEY, ALGORITHM
+from core.security import SECRET_KEY, ALGORITHM
 from services.habits import BadHabitService
 from services.relapses import RelapseService
 from services.stats import StatsService

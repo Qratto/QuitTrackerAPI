@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from database import engine, Base
 
-from exceptions import register_exception_handlers
+from core.exceptions import register_exception_handlers
 from routers.habits import habit_router
 from routers.relapses import relapse_router
 from routers.auth import auth_router

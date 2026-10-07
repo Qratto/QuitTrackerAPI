@@ -1,8 +1,8 @@
 from models import User
 from repositories.users import UserRepository
 from schemas import UserCreate
-from security import get_password_hash, verify_password
-from exceptions import UsernameExisting, UserUnauthorized
+from core.security import get_password_hash, verify_password
+from core.exceptions import UsernameExisting, UserUnauthorized
 
 
 class UserService:

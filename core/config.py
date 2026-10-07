@@ -15,6 +15,6 @@ class Settings(BaseSettings):
                 f"@{self.database_host}:{self.database_port}/{self.database_name}")
 
     class Config:
-        env_file = ".env"
+        env_file = "../.env"
 
 settings = Settings()

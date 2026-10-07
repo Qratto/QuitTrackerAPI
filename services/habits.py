@@ -1,4 +1,4 @@
-from exceptions import HabitNotFound
+from core.exceptions import HabitNotFound
 from models import BadHabit
 from repositories.habits import BadHabitRepository
 from schemas import CreateBadHabit, EditBadHabit
