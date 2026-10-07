@@ -10,8 +10,17 @@ class BadHabitRepository:
     async def find_by_id(self, habit_id: int) -> BadHabit | None:
         return await self._session.get(BadHabit, habit_id)
 
+    async def find_by_id_for_user(self, habit_id: int, user_id) -> BadHabit | None:
+        result = await self._session.execute(select(BadHabit).where(BadHabit.id == habit_id,
+                                                                    BadHabit.user_id == user_id))
+        return result.scalar_one_or_none()
+
     async def find_all(self) -> list[BadHabit]:
         result = await self._session.execute(select(BadHabit))
+        return list(result.scalars().all())
+
+    async def find_all_by_user(self, user_id: int) -> list[BadHabit]:
+        result = await self._session.execute(select(BadHabit).where(BadHabit.user_id == user_id))
         return list(result.scalars().all())
 
     async def save(self, habit: BadHabit) -> BadHabit:
