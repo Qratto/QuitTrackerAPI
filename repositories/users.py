@@ -1,10 +1,6 @@
-from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from database import SessionDep
 from models import User
-from typing import Annotated
 
 
 class UserRepository:
@@ -20,10 +16,3 @@ class UserRepository:
         await self._session.commit()
         await self._session.refresh(user)
         return user
-
-
-async def get_user_repository(session: SessionDep) -> UserRepository:
-    return UserRepository(session)
-
-
-UserRepositoryDep = Annotated[UserRepository, Depends(get_user_repository)]

@@ -1,9 +1,5 @@
-from fastapi import Depends
-
 from models import User
-from repositories.users import UserRepository, UserRepositoryDep
-from typing import Annotated
-
+from repositories.users import UserRepository
 from schemas import UserCreate
 from security import get_password_hash, verify_password
 from exceptions import UsernameExisting, UserUnauthorized
@@ -28,10 +24,3 @@ class UserService:
 
     async def get_user_by_username(self, username: str) -> User:
         return await self._repository.find_by_username(username)
-
-
-async def get_user_service(repository: UserRepositoryDep) -> UserService:
-    return UserService(repository)
-
-
-UserServiceDep = Annotated[UserService, Depends(get_user_service)]

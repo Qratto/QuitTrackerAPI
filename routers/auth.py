@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from schemas import UserResponse, UserCreate, Token
 from security import create_access_token
-from services.users import UserServiceDep
+from dependencies import UserServiceDep
 
 from typing import Annotated
 

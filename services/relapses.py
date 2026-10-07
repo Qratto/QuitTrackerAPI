@@ -1,10 +1,6 @@
-from typing import Annotated
-from fastapi import Depends
-
 from models import Relapse
 from schemas import CreateRelapse
-
-from repositories.relapses import RelapseRepository, RelapseRepositoryDep
+from repositories.relapses import RelapseRepository
 
 
 class RelapseService:
@@ -17,10 +13,3 @@ class RelapseService:
     async def create(self, habit_id: int, relapse_data: CreateRelapse):
         relapse = Relapse(**relapse_data.model_dump(), habit_id=habit_id)
         return await self._repository.save(relapse)
-
-
-def get_relapse_service(repository: RelapseRepositoryDep) -> RelapseService:
-    return RelapseService(repository)
-
-
-RelapseServiceDep = Annotated[RelapseService, Depends(get_relapse_service)]

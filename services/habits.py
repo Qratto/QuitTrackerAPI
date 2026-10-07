@@ -1,10 +1,6 @@
-from typing import Annotated
-
-from fastapi import Depends
-
 from exceptions import HabitNotFound
 from models import BadHabit
-from repositories.habits import BadHabitRepository, HabitRepositoryDep
+from repositories.habits import BadHabitRepository
 from schemas import CreateBadHabit, EditBadHabit
 
 
@@ -39,10 +35,3 @@ class BadHabitService:
     async def delete(self, habit_id: int) -> None:
         habit = await self.__get_or_404(habit_id)
         await self._repository.remove(habit)
-
-
-def get_habit_service(repository: HabitRepositoryDep) -> BadHabitService:
-    return BadHabitService(repository)
-
-
-HabitServiceDep = Annotated[BadHabitService, Depends(get_habit_service)]

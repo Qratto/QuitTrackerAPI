@@ -1,9 +1,5 @@
-from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Annotated
-
-from database import SessionDep
 from models import Relapse
 
 
@@ -20,10 +16,3 @@ class RelapseRepository:
         await self._session.commit()
         await self._session.refresh(relapse)
         return relapse
-
-
-def get_relapse_repository(session: SessionDep) -> RelapseRepository:
-    return RelapseRepository(session)
-
-
-RelapseRepositoryDep = Annotated[RelapseRepository, Depends(get_relapse_repository)]

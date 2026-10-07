@@ -1,11 +1,7 @@
 from datetime import timedelta, timezone, datetime
-from typing import Annotated
-
-from fastapi import Depends
-
 from models import Relapse, BadHabit
-from repositories.habits import BadHabitRepository, HabitRepositoryDep
-from repositories.relapses import RelapseRepository, RelapseRepositoryDep
+from repositories.habits import BadHabitRepository
+from repositories.relapses import RelapseRepository
 from schemas import BadHabitStats
 
 
@@ -50,12 +46,3 @@ class StatsService:
         habit = await self._habit_repository.find_by_id(habit_id)
         relapses = await self._relapse_repository.find_by_habit(habit_id)
         return await self.__calculate_stats(habit, relapses)
-
-
-def get_stats_service(
-        habit_repository: HabitRepositoryDep,
-        relapse_repository: RelapseRepositoryDep) -> StatsService:
-    return StatsService(habit_repository, relapse_repository)
-
-
-StatsServiceDep = Annotated[StatsService, Depends(get_stats_service)]

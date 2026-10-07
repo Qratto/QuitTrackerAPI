@@ -1,7 +1,6 @@
 from fastapi import APIRouter
-
 from schemas import ResponseRelapse, CreateRelapse
-from services.relapses import RelapseServiceDep
+from dependencies import RelapseServiceDep
 
 relapse_router = APIRouter(tags=["relapses"])
 

@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
 from schemas import ResponseBadHabit, EditBadHabit, BadHabitStats, CreateBadHabit
-from services.habits import HabitServiceDep
-from services.stats import StatsServiceDep
+from dependencies import HabitServiceDep
+from dependencies import StatsServiceDep
 
 habit_router = APIRouter(prefix="/habits", tags=["habits"])
 
