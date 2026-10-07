@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 from datetime import datetime
 
 
@@ -33,8 +33,6 @@ class BadHabitStats(BaseModel):
 
 # Relapse schemas
 class RelapseBase(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
     note: str | None = None
 
 
@@ -46,3 +44,25 @@ class ResponseRelapse(RelapseBase):
     id: int
     habit_id: int
     occurred_at: datetime
+
+
+# Token
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: str | None = None
+
+
+# User
+class UserCreate(BaseModel):
+    username: str
+    password: str
+
+
+class UserResponse(BaseModel):
+    id: int
+    username: str
+    is_active: bool
