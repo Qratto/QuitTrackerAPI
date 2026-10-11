@@ -41,14 +41,19 @@ def get_habit_service(repository: HabitRepositoryDep) -> BadHabitService:
     return BadHabitService(repository)
 
 
-def get_relapse_service(repository: RelapseRepositoryDep) -> RelapseService:
-    return RelapseService(repository)
+def get_relapse_service(habit_repository: HabitRepositoryDep,
+                        relapse_repository: RelapseRepositoryDep, ) -> RelapseService:
+    return RelapseService(habit_repository, relapse_repository)
+
+
+RelapseServiceDep = Annotated[RelapseService, Depends(get_relapse_service)]
 
 
 def get_stats_service(
         habit_repository: HabitRepositoryDep,
-        relapse_repository: RelapseRepositoryDep) -> StatsService:
-    return StatsService(habit_repository, relapse_repository)
+        relapse_repository: RelapseRepositoryDep,
+        relapse_service: RelapseServiceDep) -> StatsService:
+    return StatsService(habit_repository, relapse_repository, relapse_service)
 
 
 async def get_user_service(repository: UserRepositoryDep) -> UserService:
@@ -56,7 +61,6 @@ async def get_user_service(repository: UserRepositoryDep) -> UserService:
 
 
 HabitServiceDep = Annotated[BadHabitService, Depends(get_habit_service)]
-RelapseServiceDep = Annotated[RelapseService, Depends(get_relapse_service)]
 StatsServiceDep = Annotated[StatsService, Depends(get_stats_service)]
 UserServiceDep = Annotated[UserService, Depends(get_user_service)]
 

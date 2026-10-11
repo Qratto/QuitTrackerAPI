@@ -2,13 +2,17 @@ from datetime import timedelta, timezone, datetime
 from models import Relapse, BadHabit
 from repositories.habits import BadHabitRepository
 from repositories.relapses import RelapseRepository
+from services.relapses import RelapseService
 from schemas import BadHabitStats
 
 
 class StatsService:
-    def __init__(self, habit_repository: BadHabitRepository, relapse_repository: RelapseRepository):
+    def __init__(self, habit_repository: BadHabitRepository,
+                 relapse_repository: RelapseRepository,
+                 relapse_service: RelapseService):
         self._habit_repository = habit_repository
         self._relapse_repository = relapse_repository
+        self._relapse_service = relapse_service
 
     @staticmethod
     async def __calculate_stats(habit: BadHabit, relapses: list[Relapse]):
@@ -42,7 +46,11 @@ class StatsService:
                              relapse_count=len(relapses)
                              )
 
-    async def get(self, habit_id: int):
-        habit = await self._habit_repository.find_by_id(habit_id)
-        relapses = await self._relapse_repository.find_by_habit(habit_id)
+    async def get(self, habit_id: int, user_id: int | None = None):
+        if user_id is None:
+            habit = await self._habit_repository.find_by_id(habit_id)
+            relapses = await self._relapse_repository.find_by_habit(habit_id)
+        else:
+            habit = await self._habit_repository.find_by_id_for_user(habit_id, user_id)
+            relapses = await self._relapse_service.get_all_by_habit(habit_id, user_id)
         return await self.__calculate_stats(habit, relapses)

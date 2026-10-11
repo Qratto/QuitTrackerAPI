@@ -43,5 +43,7 @@ async def delete_habit(habit_id: int, service: HabitServiceDep, user: CurrentUse
 
 
 @habit_router.get("/{habit_id}/stats", response_model=BadHabitStats, status_code=200)
-async def get_stats(habit_id: int, service: StatsServiceDep):
-    return await service.get(habit_id)
+async def get_stats(habit_id: int, service: StatsServiceDep, user: CurrentUserDep):
+    if user.is_admin:
+        return await service.get(habit_id)
+    return await service.get(habit_id, user.id)
