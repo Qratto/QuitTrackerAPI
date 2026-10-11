@@ -24,3 +24,9 @@ class UserService:
 
     async def get_user_by_username(self, username: str) -> User:
         return await self._repository.find_by_username(username)
+
+    async def get_all(self) -> list[User]:
+        return await self._repository.find_all()
+
+    async def get(self, user_id: int) -> User:
+        return await self._repository.find_by_id(user_id)

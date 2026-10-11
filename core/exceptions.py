@@ -16,6 +16,9 @@ class UserUnauthorized(Exception):
     def __init__(self):
         pass
 
+class UserForbidden(Exception):
+    def __init__(self):
+        pass
 
 class CredentialsException(Exception):
     def __init__(self):
@@ -50,4 +53,11 @@ def register_exception_handlers(app: FastAPI) -> None:
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"message": "Could not validate credentials",
                      "WWW-Authenticate": "Bearer"}
+        )
+    @app.exception_handler(UserForbidden)
+    async def user_forbidden_handler(request: Request, exc: UserUnauthorized):
+        return JSONResponse(
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"message": "Forbidden"}
+
         )

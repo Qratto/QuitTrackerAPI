@@ -16,3 +16,10 @@ class UserRepository:
         await self._session.commit()
         await self._session.refresh(user)
         return user
+
+    async def find_all(self) -> list[User]:
+        result = await self._session.execute(select(User))
+        return list(result.scalars().all())
+
+    async def find_by_id(self, user_id: int) -> User | None:
+        return await self._session.get(User, user_id)
