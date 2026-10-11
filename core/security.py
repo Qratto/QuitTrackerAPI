@@ -1,6 +1,6 @@
 import jwt
 
-from config import settings
+from core.config import settings
 from fastapi.security import OAuth2PasswordBearer
 from pwdlib import PasswordHash
 from datetime import timedelta, datetime, timezone
